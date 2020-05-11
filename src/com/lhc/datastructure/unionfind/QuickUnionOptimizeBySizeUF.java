@@ -2,6 +2,10 @@ package com.lhc.datastructure.unionfind;
 
 import java.util.Arrays;
 
+/**
+ * 第3个版本的并查集
+ * 基于Size优化并查集，将数量少的树链接给数量多的树
+ */
 public class QuickUnionOptimizeBySizeUF implements IUnionFind {
 
     /**

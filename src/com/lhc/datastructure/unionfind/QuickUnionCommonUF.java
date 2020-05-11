@@ -2,6 +2,10 @@ package com.lhc.datastructure.unionfind;
 
 import java.util.Arrays;
 
+/**
+ * 第2个版本的并查集
+ * 将孩子节点指向父亲节点
+ */
 public class QuickUnionCommonUF implements IUnionFind {
 
     /**

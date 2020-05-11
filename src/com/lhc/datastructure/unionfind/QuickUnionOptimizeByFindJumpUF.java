@@ -3,10 +3,12 @@ package com.lhc.datastructure.unionfind;
 import java.util.Arrays;
 
 /**
- * 查找节点的同时进行路径压缩，同时维护一个并不完全准的rank列表。
+ * 第5个版本的并查集
+ * 查找节点的同时进行路径压缩,每次将节点指向父节点的父节点
+ * 同时维护一个并不完全准的rank列表。
  * 只是作为一个节点优化的参考
  */
-public class QuickUnionUF implements IUnionFind {
+public class QuickUnionOptimizeByFindJumpUF implements IUnionFind {
 
     /**
      * 存放数据对应集合的编号
@@ -18,7 +20,7 @@ public class QuickUnionUF implements IUnionFind {
     private int[] nodeRank;
 
 
-    public QuickUnionUF(int size) {
+    public QuickUnionOptimizeByFindJumpUF(int size) {
         this.parent = new int[size];
         this.nodeRank = new int[size];
         for (int i = 0; i < parent.length; i++) {
@@ -63,8 +65,8 @@ public class QuickUnionUF implements IUnionFind {
     }
 
     /**
-     * 查找根节点的同时依赖递归进行压缩
-     * 但递归有相应开销，其性能不一定有第五版好
+     * 查找根节点的同时进行路径压缩
+     * 如果对同一个节点多次调用find，能让树的深度变成2
      *
      * @param p
      * @return
@@ -74,10 +76,12 @@ public class QuickUnionUF implements IUnionFind {
             throw new IndexOutOfBoundsException();
         }
 
-        if (p != parent[p]) {
-            parent[p] = find(parent[p]);
+        while (p != parent[p]) {
+            parent[p] = parent[parent[p]];//当前节点指向父节点的父节点
+            p = parent[p];
         }
-        return parent[p];
+        return p;
+
     }
 
     @Override
@@ -92,7 +96,7 @@ public class QuickUnionUF implements IUnionFind {
     }
 
     public static void main(String[] args) {
-        QuickUnionUF quickUnionUF = new QuickUnionUF(10);
+        QuickUnionOptimizeByFindJumpUF quickUnionUF = new QuickUnionOptimizeByFindJumpUF(10);
         System.out.println(quickUnionUF);
         quickUnionUF.unionElements(0, 1);
         quickUnionUF.unionElements(1, 2);

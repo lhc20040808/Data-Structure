@@ -3,6 +3,7 @@ package com.lhc.datastructure.unionfind;
 import java.util.Arrays;
 
 /**
+ * 第4个版本的并查集
  * 基于Rank优化并查集，将深度低的树链接到深度高的树上
  */
 public class QuickUnionOptimizeByRankUF implements IUnionFind {

@@ -1,6 +1,7 @@
 package com.lhc.datastructure.unionfind;
 
 /**
+ * 第1个版本的并查集
  * 能快速查找的并查集
  * find方法时间复杂度0(1)
  * 但是合并操作为O(n)
