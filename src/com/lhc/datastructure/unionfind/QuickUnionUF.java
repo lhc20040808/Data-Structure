@@ -44,7 +44,7 @@ public class QuickUnionUF implements IUnionFind {
         unionElementsOptimizeByRank(p, q);
     }
 
-    private void unionElementsOptimizeByRank(int p, int q) {
+    public void unionElementsOptimizeByRank(int p, int q) {
         int pRoot = find(p);
         int qRoot = find(q);
 
@@ -71,7 +71,7 @@ public class QuickUnionUF implements IUnionFind {
      * @param p
      * @param q
      */
-    private void unionElementsOptimizeBySize(int p, int q) {
+    public void unionElementsOptimizeBySize(int p, int q) {
         int pRoot = find(p);
         int qRoot = find(q);
 
@@ -94,7 +94,7 @@ public class QuickUnionUF implements IUnionFind {
      * @param p
      * @param q
      */
-    private void unionElementsCommon(int p, int q) {
+    public void unionElementsCommon(int p, int q) {
         int pRoot = find(p);
         int qRoot = find(q);
 
