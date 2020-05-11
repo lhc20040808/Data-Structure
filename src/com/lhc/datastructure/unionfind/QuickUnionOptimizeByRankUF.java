@@ -3,10 +3,9 @@ package com.lhc.datastructure.unionfind;
 import java.util.Arrays;
 
 /**
- * 查找节点的同时进行路径压缩，同时维护一个并不完全准的rank列表。
- * 只是作为一个节点优化的参考
+ * 基于Rank优化并查集，将深度低的树链接到深度高的树上
  */
-public class QuickUnionUF implements IUnionFind {
+public class QuickUnionOptimizeByRankUF implements IUnionFind {
 
     /**
      * 存放数据对应集合的编号
@@ -18,7 +17,7 @@ public class QuickUnionUF implements IUnionFind {
     private int[] nodeRank;
 
 
-    public QuickUnionUF(int size) {
+    public QuickUnionOptimizeByRankUF(int size) {
         this.parent = new int[size];
         this.nodeRank = new int[size];
         for (int i = 0; i < parent.length; i++) {
@@ -34,7 +33,7 @@ public class QuickUnionUF implements IUnionFind {
 
     @Override
     public boolean isConnected(int p, int q) {
-        return findWithPathOptimize(p) == findWithPathOptimize(q);
+        return find(p) == find(q);
     }
 
     @Override
@@ -43,8 +42,8 @@ public class QuickUnionUF implements IUnionFind {
     }
 
     private void unionElementsOptimizeByRank(int p, int q) {
-        int pRoot = findWithPathOptimize(p);
-        int qRoot = findWithPathOptimize(q);
+        int pRoot = find(p);
+        int qRoot = find(q);
 
         if (pRoot == qRoot) {
             return;
@@ -63,22 +62,20 @@ public class QuickUnionUF implements IUnionFind {
     }
 
     /**
-     * 查找根节点的同时进行路径压缩
+     * 时间复杂度0(h)
      *
      * @param p
      * @return
      */
-    public int findWithPathOptimize(int p) {
+    private int find(int p) {
         if (p < 0 || p >= parent.length) {
             throw new IndexOutOfBoundsException();
         }
 
         while (p != parent[p]) {
-            parent[p] = parent[parent[p]];//当前节点指向父节点的父节点
             p = parent[p];
         }
         return p;
-
     }
 
     @Override
@@ -88,20 +85,7 @@ public class QuickUnionUF implements IUnionFind {
                 '}';
     }
 
-    public String getRank() {
-        return Arrays.toString(nodeRank);
-    }
-
     public static void main(String[] args) {
-        QuickUnionUF quickUnionUF = new QuickUnionUF(10);
-        System.out.println(quickUnionUF);
-        quickUnionUF.unionElements(0, 1);
-        quickUnionUF.unionElements(1, 2);
-        System.out.println(quickUnionUF);
-        quickUnionUF.unionElements(2, 3);
-        System.out.println(quickUnionUF);
-        quickUnionUF.unionElements(3, 4);
-        System.out.println(quickUnionUF);
-        System.out.println(quickUnionUF.getRank());
+
     }
 }
