@@ -6,5 +6,5 @@ public interface IUnionFind {
 
     boolean isConnected(int p, int q);
 
-    boolean unionElements(int p, int q);
+    void unionElements(int p, int q);
 }
