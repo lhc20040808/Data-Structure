@@ -1,7 +1,6 @@
 package com.lhc.datastructure.tree;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 二分搜索树
@@ -399,16 +398,5 @@ public class AVLTree<K extends Comparable<K>, V> {
         inOrder(node.left, list);
         list.add(node.key);
         inOrder(node.right, list);
-    }
-
-    /////////////////
-    //      5      //
-    //    /   \    //
-    //   3    6    //
-    //  / \    \   //
-    // 2  4     8  //
-    /////////////////
-    public static void main(String[] args) {
-
     }
 }

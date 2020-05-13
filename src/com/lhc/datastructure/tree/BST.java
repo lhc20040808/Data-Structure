@@ -1,5 +1,6 @@
 package com.lhc.datastructure.tree;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
@@ -7,26 +8,30 @@ import java.util.Stack;
 /**
  * 二分搜索树
  * 左孩子比父亲节点小，右孩子比父亲节点大
- * @param <E>
+ *
+ * @param <K>
  */
-public class BST<E extends Comparable<E>> {
+public class BST<K extends Comparable<K>, V> {
 
     private class Node implements TreePrintUtil.TreeNode {
 
-        E val;
+        K key;
+        V val;
         Node left;
         Node right;
         int size;
         int depth;
 
-        public Node(E val) {
+        public Node(K key, V val) {
+            this.key = key;
             this.val = val;
             this.left = null;
             this.right = null;
             this.size = 1;
         }
 
-        public Node(E val, int depth) {
+        public Node(K key, V val, int depth) {
+            this.key = key;
             this.val = val;
             this.left = null;
             this.right = null;
@@ -37,7 +42,7 @@ public class BST<E extends Comparable<E>> {
         @Override
         public String toString() {
             return "Node{" +
-                    "val=" + val +
+                    "val=" + key +
                     ", size=" + size +
 //                    ", depth=" + depth +
                     '}';
@@ -45,7 +50,7 @@ public class BST<E extends Comparable<E>> {
 
         @Override
         public String getPrintInfo() {
-            return val.toString();
+            return key.toString();
         }
 
         @Override
@@ -77,26 +82,48 @@ public class BST<E extends Comparable<E>> {
         return root == null;
     }
 
-    public void add(E e) {
-        root = addR(root, e, 1);
+    public void add(K k, V v) {
+        root = addR(root, k, v, 1);
+    }
+
+
+    public boolean isBST() {
+        ArrayList<K> list = new ArrayList<>();
+        inOrderCollect(root, list);
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i - 1).compareTo(list.get(i)) > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void inOrderCollect(Node node, ArrayList<K> list) {
+        if (node == null) {
+            return;
+        }
+
+        inOrderCollect(node.left, list);
+        list.add(node.key);
+        inOrderCollect(node.right, list);
     }
 
     /**
      * 递归-增加子节点
      *
      * @param node
-     * @param e
+     * @param k
      * @return
      */
-    private Node addR(Node node, E e, int depth) {
+    private Node addR(Node node, K k, V v, int depth) {
         if (node == null) {
-            return new Node(e, depth);
+            return new Node(k, v, depth);
         }
         node.size++;
-        if (e.compareTo(node.val) < 0) {
-            node.left = addR(node.left, e, ++depth);
-        } else if (e.compareTo(node.val) > 0) {
-            node.right = addR(node.right, e, ++depth);
+        if (k.compareTo(node.key) < 0) {
+            node.left = addR(node.left, k, v, ++depth);
+        } else if (k.compareTo(node.key) > 0) {
+            node.right = addR(node.right, k, v, ++depth);
         }
         return node;
     }
@@ -104,27 +131,27 @@ public class BST<E extends Comparable<E>> {
     /**
      * 非递归-增加子节点
      *
-     * @param e
+     * @param k
      */
-    private void nonRecursiveAdd(E e) {
+    private void nonRecursiveAdd(K k, V v) {
         if (root == null) {
-            root = new Node(e);
+            root = new Node(k, v);
             return;
         }
 
         Node node = root;
         for (; ; ) {
-            if (e.compareTo(node.val) < 0) {
+            if (k.compareTo(node.key) < 0) {
                 if (node.left == null) {
-                    node.left = new Node(e);
+                    node.left = new Node(k, v);
                     return;
                 } else {
                     node.size++;
                     node = node.left;
                 }
-            } else if (e.compareTo(node.val) > 0) {
+            } else if (k.compareTo(node.key) > 0) {
                 if (node.right == null) {
-                    node.right = new Node(e);
+                    node.right = new Node(k, v);
                     return;
                 } else {
                     node.size++;
@@ -134,47 +161,47 @@ public class BST<E extends Comparable<E>> {
         }
     }
 
-    public boolean contains(E e) {
-        return recursiveContains(root, e);
+    public boolean contains(K k) {
+        return recursiveContains(root, k);
     }
 
     /**
      * 递归-查询元素
      *
      * @param node
-     * @param e
+     * @param k
      * @return
      */
-    private boolean recursiveContains(Node node, E e) {
+    private boolean recursiveContains(Node node, K k) {
         if (node == null) {
             return false;
         }
 
-        if (e.compareTo(node.val) == 0) {
+        if (k.compareTo(node.key) == 0) {
             return true;
         }
 
-        return e.compareTo(node.val) < 0 ? recursiveContains(node.left, e) : recursiveContains(node.right, e);
+        return k.compareTo(node.key) < 0 ? recursiveContains(node.left, k) : recursiveContains(node.right, k);
     }
 
     /**
      * 非递归-查询元素
      *
-     * @param e
+     * @param k
      * @return
      */
-    private boolean nonRecursiveContains(E e) {
+    private boolean nonRecursiveContains(K k) {
         Node node = root;
         for (; ; ) {
             if (node == null) {
                 return false;
             }
 
-            if (e.compareTo(node.val) == 0) {
+            if (k.compareTo(node.key) == 0) {
                 return true;
             }
 
-            if (e.compareTo(node.val) < 0) {
+            if (k.compareTo(node.key) < 0) {
                 node = node.left;
             } else {
                 node = node.right;
@@ -199,7 +226,7 @@ public class BST<E extends Comparable<E>> {
         if (node == null)
             return;
 
-        System.out.println(node.val);
+        System.out.println(node.key);
         preOrderR(node.left);
         preOrderR(node.right);
     }
@@ -218,7 +245,7 @@ public class BST<E extends Comparable<E>> {
         stack.push(node);
         while (!stack.isEmpty()) {
             node = stack.pop();
-            System.out.println(node.val);
+            System.out.println(node.key);
             if (node.right != null)
                 stack.push(node.right);
             if (node.left != null)
@@ -258,7 +285,7 @@ public class BST<E extends Comparable<E>> {
                 break;
             }
             node = stack.pop();
-            System.out.println(node.val);
+            System.out.println(node.key);
             node = node.right;
         }
     }
@@ -283,7 +310,7 @@ public class BST<E extends Comparable<E>> {
         queue.add(node);
         while (!queue.isEmpty()) {
             node = queue.poll();
-            System.out.println(node.val);
+            System.out.println(node.key);
             if (node.left != null) {
                 queue.add(node.left);
             }
@@ -299,7 +326,7 @@ public class BST<E extends Comparable<E>> {
 
         postOrderR(node.left);
         postOrderR(node.right);
-        System.out.println(node.val);
+        System.out.println(node.key);
     }
 
     private void postOrderNR(Node node) {
@@ -329,12 +356,12 @@ public class BST<E extends Comparable<E>> {
         }
 
         while (!s2.isEmpty()) {
-            System.out.println(s2.pop().val);
+            System.out.println(s2.pop().key);
         }
     }
 
-    public E minimum() {
-        E val = minimumR(root).val;
+    public K minimum() {
+        K val = minimumR(root).key;
         System.out.println(val);
         return val;
     }
@@ -358,11 +385,11 @@ public class BST<E extends Comparable<E>> {
         return node;
     }
 
-    public E removeMin() {
-        E e = minimumR(root).val;
+    public K removeMin() {
+        K k = minimumR(root).key;
         root = removeMinR(root);
-        System.out.println("remove " + e);
-        return e;
+        System.out.println("remove " + k);
+        return k;
     }
 
     /**
@@ -381,8 +408,8 @@ public class BST<E extends Comparable<E>> {
         return node;
     }
 
-    public E maximum() {
-        E val = maximumR(root).val;
+    public K maximum() {
+        K val = maximumR(root).key;
         System.out.println(val);
         return val;
     }
@@ -394,11 +421,11 @@ public class BST<E extends Comparable<E>> {
         return maximumR(node.right);
     }
 
-    public E removeMax() {
-        E e = maximumR(root).val;
+    public K removeMax() {
+        K k = maximumR(root).key;
         root = removeMaxR(root);
-        System.out.println("remove " + e);
-        return e;
+        System.out.println("remove " + k);
+        return k;
     }
 
     private Node removeMaxR(Node node) {
@@ -412,22 +439,22 @@ public class BST<E extends Comparable<E>> {
         return node;
     }
 
-    public void removeElement(E e) {
-        removeElementR(root, e);
+    public void removeElement(K k) {
+        removeElementR(root, k);
     }
 
-    private Node removeElementR(Node node, E e) {
+    private Node removeElementR(Node node, K k) {
         if (node == null) {
             return null;
         }
 
-        if (e.compareTo(node.val) < 0) {
+        if (k.compareTo(node.key) < 0) {
             node.size--;
-            node.left = removeElementR(node.left, e);
+            node.left = removeElementR(node.left, k);
             return node;
-        } else if (e.compareTo(node.val) > 0) {
+        } else if (k.compareTo(node.key) > 0) {
             node.size--;
-            node.right = removeElementR(node.right, e);
+            node.right = removeElementR(node.right, k);
             return node;
         } else {
             if (node.left == null) {
@@ -452,72 +479,34 @@ public class BST<E extends Comparable<E>> {
         }
     }
 
-    /**
-     * 比e小的最大的数
-     *
-     * @param e
-     */
-    public void floor(E e) {
-        //TODO
+    public void set(K key, V val) {
+        Node node = find(key);
+        if (node == null) {
+            throw new IllegalArgumentException("node do not exist");
+        }
+        node.val = val;
     }
 
-    /**
-     * 比e大的最小的数
-     *
-     * @param e
-     */
-    public void ceil(E e) {
-        //TODO
+    public Node find(K key) {
+        return find(root, key);
     }
 
-    /**
-     * 返回e的排名
-     *
-     * @param e
-     * @return
-     */
-    public int rank(E e) {
-        //TODO
-        return 0;
+    private Node find(Node node, K key) {
+        if (node == null) {
+            return null;
+        }
+
+        if (key.compareTo(node.key) < 0) {
+            return find(node.left, key);
+        } else if (key.compareTo(node.key) > 0) {
+            return find(node.right, key);
+        } else {
+            return node;
+        }
     }
 
-
-    /**
-     * 排第rank位的元素是什么
-     *
-     * @param rank
-     * @return
-     */
-    public E select(int rank) {
-        return null;
-    }
-
-    /////////////////
-    //      5      //
-    //    /   \    //
-    //   3    6    //
-    //  / \    \   //
-    // 2  4     8  //
-    /////////////////
-    public static void main(String[] args) {
-        BST bst = new BST();
-        int[] nums = {5, 3, 6, 8, 4, 2, 7, 10, 9, 11};
-        for (int num : nums)
-            bst.add(num);
-
-//        bst.preOrder();
-//        bst.inOrder();
-//        bst.postOrder();
-//        bst.levelOrder();
-//        bst.minimum();
-//        bst.removeMin();
-//        bst.maximum();
-//        bst.removeMax();
-//        bst.inOrder();
-        TreePrintUtil.pirnt(bst.root);
-//        bst.removeElement(8);
-//        bst.removeMin();
-
-//        bst.inOrder();
+    public V get(K key) {
+        Node node = find(key);
+        return node == null ? null : node.val;
     }
 }
