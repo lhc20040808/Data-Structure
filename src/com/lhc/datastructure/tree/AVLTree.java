@@ -84,7 +84,13 @@ public class AVLTree<K extends Comparable<K>, V> {
             node.right = add(node.right, k, v);
         }
 
+        int beforeHeight = node.height;
         node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
+
+        //添加节点后，节点高度没发生变化，说明不需要旋转
+        if(beforeHeight == node.height){
+            return node;
+        }
 
         int balanceFactor = getBalanceFactor(node);
 
